@@ -11,29 +11,57 @@ require 'google/apis/calendar_v3'
 class DutyShifts
     ConfigurationFile = './config.yaml'
 
+    def self.help
+        scriptname = File.basename __FILE__
+        puts <<-HELP
+USE: #{scriptname} [options]
+
+Options:
+  --sheet name      - Sheet name to use
+  --date date       - Start from this date (default: today)
+  --clear           - Clear calendar before adding events
+  --dry-run         - Do not create events, only print them
+        HELP
+    end
+
     def self.run
 
         config = YAML.load_file ConfigurationFile
 
-        # TODO
-        sheet_name  = nil # option
-        keep_events = true # switch
+        next_arg = nil
+        ARGV.each do |arg|
+            case arg
+            when '--sheet'      then next_arg = :sheet_name
+            when '--date'       then next_arg = :start_date
+            when '--clear'      then config[:clear_events] = true
+            when '--dry-run'    then config[:noop] = true
+            when '--help', '-h' then return self.help
+            else
+                if next_arg
+                    config[next_arg] = arg
+                    next_arg         = nil
+                else
+                    raise ArgumentError, "This command takes no arguments"
+                end
+            end
+        end
 
-        DutyShifts::Authorization.auth_info **config.fetch(:auth)
+        DutyShifts::Authorization.auth_info **config[:auth]
 
-        spreadsheet = DutyShifts::Spreadsheet.new sheet_id: config.fetch(:sheet_id)
-        sheet_name ||= spreadsheet.list.first
+        spreadsheet = DutyShifts::Spreadsheet.new sheet_id: config[:sheet_id]
+        config[:sheet_name] ||= spreadsheet.list.first
         username = config.fetch :username, Etc.getlogin
         row = spreadsheet
-            .data(sheet: sheet_name, range: config.fetch(:sheet_range))
+            .data(sheet: config[:sheet_name], range: config[:sheet_range])
             .find { |row| row[0] == username }
         row.shift
 
-        calendar = DutyShifts::Calendar.new name: config.fetch(:calendar_name, 'DutyShifts'), keep_events: keep_events
-        alarm_times = config.fetch :alarm_times, []
+        calendar = DutyShifts::Calendar.new name: config.fetch(:calendar_name, 'DutyShifts'), keep_events: !config[:clear_events] unless config[:noop]
+        alarm_times = config.fetch(:alarm_times, [])
 
-        today = Date.today
-        today.upto(today.end_of_month) do |date|
+        start_date = Date.parse config[:start_date] if config[:start_date]
+        start_date ||= Date.today
+        start_date.upto(start_date.end_of_month) do |date|
             column      = (date.day - 1) * 2
             day_hours   = row[column].to_i
             night_hours = row[column+1].to_i
@@ -50,13 +78,17 @@ class DutyShifts
                 next
             end
             
-            starttime = Time.new *date.to_a, start_hour, 0, 0
-            calendar.add_event(
-                name:        name,
-                starttime:   starttime,
-                endtime:     starttime + length * 60 * 60,
-                alarm_times: alarm_times,
-            )
+            starttime = date.to_time hour: start_hour
+            if config[:noop]
+                puts "#{starttime}: #{name} [#{length}]"
+            else
+                calendar.add_event(
+                    name:        name,
+                    starttime:   starttime,
+                    endtime:     starttime + length * 60 * 60,
+                    alarm_times: alarm_times,
+                )
+            end
         end
     end
 
@@ -182,12 +214,12 @@ class DutyShifts
 end
 
 class Date
-    def to_a
-        [ self.year, self.month, self.day ]
-    end
-
     def end_of_month
         Date.new self.year, self.month, -1
+    end
+
+    def to_time (hour: 0, minute: 0, second: 0)
+        Time.new self.year, self.month, self.day, hour, minute, second
     end
 end
 

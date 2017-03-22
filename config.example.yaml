@@ -1,23 +1,42 @@
-# vim: se ts=4 sw=4 et:
 ---
-# Google API uthentication, see Setup section in README.md on how to obtain these values
+# Google API uthentication, see Setup section in README.md on how to obtain
+# these values.
 :auth:
     :user_id: XXXXXXXXXX.apps.googleusercontent.com
     :secret:  YYYYYYYYYYYY
-# Sheet ID, you get this from spreadsheet URL in browser,
-# the part after /spreadsheet/d/ and until next /
+
+# Spreadsheet ID, you get this from spreadsheet URL in browser, the part after
+# '/spreadsheet/d/' and until the next '/'.
 :sheet_id: ZZZZZZZZZZZZZZZZZZZ
-# This is cell range, that should contain your data,
-# first column in this range must be a column with user name,
-# and after that goes your schedule, two columns per day (daily and nightly shift hour counts)
-:sheet_range: A3:BK6
+
+# Sheet name.  Usually this is not set, and first non-hidden sheet is used.
+# Optional.  Can be set from command line.
+#:sheet_name:
+
 # This is your username in the first column of the sheet.
-# Optional. Defaults to your system username.
-:username: isbear
-# The name of the calendar. Can be arbitrary string.
-# Optional. Defaults to 'DutyShifts'.
-# Beware, that script deletes and recreates this calendar, when clearing events.
-:calendar_name: DutyShifts
+# Optional.  Defaults to your system username.
+#:username: isbear
+
+# This is cell range, that should contain your data, first column in this range
+# must be a column with user name, and after that goes your schedule, two
+# columns per day (daily and nightly shift hour counts)
+:sheet_range: A3:BK6
+
+# The name of the calendar.  Can be arbitrary string.
+# Optional.  Defaults to 'DutyShifts'.  Beware, that script deletes and
+# recreates this calendar, when clearing events.
+#:calendar_name: DutyShifts
+
 # List with minute counts to set notifications for the event.
-# Optional. Empty by default.
-:alarm_times: [ 110, 70 ]
+# Optional.  Empty by default.
+#:alarm_times: [ 110, 70 ]
+
+# Clear existing events before adding new ones.
+# Optional.  Can be set from command line.
+#:clear_event: false
+
+# Do not do any actions on calendar.  Just print list of shifts.
+# Optional.  Can be set from command line..
+#:noop: false
+
+# vim: se ts=4 sw=4 et:

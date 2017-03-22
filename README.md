@@ -92,12 +92,26 @@ Congratulations! This should be it. Now, if you type (in the project dir)
 bundler exec ./main.rb
 ```
 
-script will examine your sheet and create events in your calendar.
+script will examine your sheet and create events in your calendar. If all is
+well, script does not output anything. If something goes wrong - you'll see a
+loud raw ruby exception. Usually it is verbose enough to understand the cause
+for the error.
 
 First time use of new credentials will require a confirmation from you. Script
 will print an url, that you will need to open in your browser, and expects you
 to copypaste the code, that google will provide. This creates an 'auth token',
 that script will use from now on. This auth token will be stored in the file
 'store.yaml' (this path can be overridden in the config file as well).
+
+Script does have a bunch of options, for example, you can use `--dry-run` to
+just print shifts, without modifying calendar.  Option `--clear` allows to
+clear existing events before adding new.
+
+Using `--date` and `--sheet` you can apply data for non-current month. For
+example:
+
+```shell
+bundler exec ./main.rb --date 2017-04-01 --sheet 'April 2017'
+```
 
   -- Mykhailo Danylenko <isbear@isbear.org.ua>
