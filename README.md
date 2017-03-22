@@ -19,9 +19,9 @@ admin3 12  -  - 12  -  - 12  - ...
 Shifts occasionally fall out of the pattern, thus I decided to make them
 available in my pone's calendar. Not that google calendar is that useful for
 alarms - it does not allow to set notification sounds separately for timed
-events and wholeday events (you don't want an alarm at 8 o'clock in the Sunday
-three days before your dog's birthday, do you?), but it is much more convenient 
-to have at least some form of notification.
+events and wholeday events (you don't want an alarm at 8 o'clock in the Sunday's
+morning three days before your dog's birthday, do you?), but it is much more
+convenient to have at least some form of notification.
 
 ## Install
 
@@ -34,7 +34,7 @@ So, the recipe is as follows (Debian):
 
 ```shell
 # aptitude install bundler
-$ git clone $projecturl duty-shifts
+$ git clone https://github.com/uvoteam/DutyShifts2Calendar duty-shifts
 $ cd duty-shifts
 $ bundler install --path=vendor/bundle
 $ cp config.example.yaml config.yaml
