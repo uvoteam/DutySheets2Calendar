@@ -1,0 +1,23 @@
+# vim: se ts=4 sw=4 et:
+---
+# Google API uthentication, see Setup section in README.md on how to obtain these values
+:auth:
+    :user_id: XXXXXXXXXX.apps.googleusercontent.com
+    :secret:  YYYYYYYYYYYY
+# Sheet ID, you get this from spreadsheet URL in browser,
+# the part after /spreadsheet/d/ and until next /
+:sheet_id: ZZZZZZZZZZZZZZZZZZZ
+# This is cell range, that should contain your data,
+# first column in this range must be a column with user name,
+# and after that goes your schedule, two columns per day (daily and nightly shift hour counts)
+:sheet_range: A3:BK6
+# This is your username in the first column of the sheet.
+# Optional. Defaults to your system username.
+:username: isbear
+# The name of the calendar. Can be arbitrary string.
+# Optional. Defaults to 'DutyShifts'.
+# Beware, that script deletes and recreates this calendar, when clearing events.
+:calendar_name: DutyShifts
+# List with minute counts to set notifications for the event.
+# Optional. Empty by default.
+:alarm_times: [ 110, 70 ]

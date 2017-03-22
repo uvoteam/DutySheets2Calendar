@@ -1,0 +1,11 @@
+# vim garbage
+*~
+*.swp
+# credentials and production data
+*.json
+config.yaml
+store.yaml
+# bundler
+vendor
+Gemfile.lock
+.bundle
